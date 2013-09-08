@@ -1,4 +1,5 @@
-#!/bin/python
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 __program__         = 'slDeparturesCLI'
 __version__         = 'v0.1'
@@ -6,11 +7,91 @@ __author__          = 'Joakim Uddholm'
 __doc__             = '''
 Usage:
 
-%s [station name or id]
+%s [station id]
 '''
 
-__API_KEY__ = 'ace842059e54f0d2f21512c4bb4465b0'
 
 from sitecache import SiteCache
+from sitedepartures import SiteDeparture
+import sys, gflags
+from operator import itemgetter, attrgetter
+
+def Usage(expanded=False):
+    sys.stdout.write(__doc__ % sys.argv[0])
+    if expanded:
+        print FLAGS.MainModuleHelp()
+    sys.exit(1)
+
+def Version():
+	print __program__, __version__, __author__
+	
+def GetDepartures(siteId, types, conky, maxdepartures):
+	s = SiteDeparture()
+	departures = s.GetDepartures(siteId)
+	departures = sorted(departures, key=itemgetter("ExpectedDateTime"))
+	types = ["Dps" + t.capitalize() for t in types]
+	#print types
+	departures = [dep for dep in departures if dep["Type"] in types]
+	if len(departures) == 0:
+		print "No departures within the hour."
+		sys.exit()
+	
+	for dep in departures[:maxdepartures]:
+		print dep["Type"].replace("Dps", "").ljust(5) + " " + dep["Name"].ljust(6) + " " + dep["Destination"].ljust(35) + " " + dep["DisplayTime"].rjust(7)
+		 
+		
+
+FLAGS = gflags.FLAGS
+# allow mixing of commands and options
+FLAGS.UseGnuGetOpt()
+
+gflags.DEFINE_bool("help", None, "Show this help")
+gflags.DEFINE_bool("helpshort", None, "Show command help only")
+gflags.DEFINE_bool("version", None, "Show the version and exit")
+gflags.DEFINE_string("stationstr", None, "Search for departures by station name")
+gflags.DEFINE_integer("maxdepartures", 10, "Max amount of departures to show")
+gflags.DEFINE_bool("conky", False, "Format for conky")
+gflags.DEFINE_multistring("types", ['bus','train','metro','tram'], "Which types of transit to include. Possible: bus, train, metro or tram")
+
+
+
+def main(argv):	
+	try:
+		argv = FLAGS(argv)  # parse flags		
+	except gflags.FlagsError, e:
+		print '%s\\nUsage: %s ARGS\\n%s' % (e, sys.argv[0], FLAGS)
+		sys.exit(1)
+
+	if FLAGS.version:
+		Version()
+		sys.exit()
+			
+	if FLAGS.help:
+		Usage(True)
+		sys.exit()
+	 
+	if FLAGS.helpshort:
+		Usage()
+		sys.exit()
+	 
+	if FLAGS.stationstr or len(argv) > 2:
+		siteId = -1
+		if FLAGS.stationstr:
+			s = SiteCache()
+			siteId = s.GetSiteId(FLAGS.stationstr)			
+		else:
+			try:
+				siteId = int(argv[1])
+			except:
+				Usage(True)
+				sys.exit()						
+		GetDepartures(siteId, FLAGS.types, FLAGS.conky, FLAGS.maxdepartures)		
+	else:
+		Usage(True)		
+		
+
+if __name__ == '__main__':
+	main(sys.argv)
+
 
 
