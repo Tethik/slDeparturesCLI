@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# coding: UTF-8
 
 import xml.etree.ElementTree as ET
 import httplib2
@@ -35,7 +36,7 @@ class SiteDeparture:
 		
 		return {
 				"Type": "DpsMetro",
-				"Name": groupOfLine + " " + str(num),				
+				"Name": groupOfLine, #+ " " + str(num),				
 				"Destination": dest,
 				"DisplayTime": displaytime,
 				"ExpectedDateTime": expectedtime.strftime("%Y-%m-%dT%X")

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# coding: UTF-8
 
 __program__         = 'slDeparturesCLI'
 __version__         = 'v0.1'
@@ -13,7 +14,7 @@ Usage:
 
 from sitecache import SiteCache
 from sitedepartures import SiteDeparture
-import sys, gflags
+import sys, gflags, codecs
 from operator import itemgetter, attrgetter
 
 def Usage(expanded=False):
@@ -39,7 +40,7 @@ def GetDepartures(siteId, types, conky, maxdepartures):
 	for dep in departures[:maxdepartures]:
 		print dep["Type"].replace("Dps", "").ljust(5) + " " + dep["Name"].ljust(6) + " " + dep["Destination"].ljust(35) + " " + dep["DisplayTime"].rjust(7)
 		 
-		
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout)		
 
 FLAGS = gflags.FLAGS
 # allow mixing of commands and options
