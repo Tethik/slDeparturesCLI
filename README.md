@@ -3,6 +3,8 @@ slDeparturesCLI
 
 Simple commandline script to fetch station departures info for the Stockholm public transport system (SL)
 
+Using this api: http://www.trafiklab.se/api/sl-realtidsinfo/
+
 Example usage
 ===============
 By name:
