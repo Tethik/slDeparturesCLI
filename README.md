@@ -18,11 +18,10 @@ Limiting by amount:
 `slDeparturesCLI 9192 --maxdepartures=5`
 
 Conky:
-`
-Stadshagen:
-${execpi 60 slDeparturesCLI --conky --stationstr=Stadshagen}
 
-KTH:
-${execpi 60 slDeparturesCLI --conky 9204}
-`
+    Stadshagen:
+    ${execpi 60 slDeparturesCLI --conky --stationstr=Stadshagen}
+    KTH:
+    ${execpi 60 slDeparturesCLI --conky 9204}
+
 
