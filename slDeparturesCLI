@@ -73,12 +73,17 @@ def main(argv):
 	if FLAGS.helpshort:
 		Usage()
 		sys.exit()
-	 
-	if FLAGS.stationstr or len(argv) > 2:
+	
+	
+	if FLAGS.stationstr or len(argv) > 1:
 		siteId = -1
 		if FLAGS.stationstr:
-			s = SiteCache()
-			siteId = s.GetSiteId(FLAGS.stationstr)			
+			try:
+				s = SiteCache()
+				siteId = s.GetSiteId(FLAGS.stationstr)			
+			except:
+				print "Found no such station"
+				sys.exit()
 		else:
 			try:
 				siteId = int(argv[1])
