@@ -38,7 +38,10 @@ def GetDepartures(siteId, types, conky, maxdepartures):
 		sys.exit()
 	
 	for dep in departures[:maxdepartures]:
-		print dep["Type"].replace("Dps", "").ljust(5) + " " + dep["Name"].ljust(6) + " " + dep["Destination"].ljust(35) + " " + dep["DisplayTime"].rjust(7)
+		if conky:
+			print dep["Type"].replace("Dps", "").ljust(20) + " " + dep["Name"].ljust(10) + " " + dep["Destination"].ljust(70) + " $alignr " + dep["DisplayTime"]
+		else:
+			print dep["Type"].replace("Dps", "").ljust(5) + " " + dep["Name"].ljust(6) + " " + dep["Destination"].ljust(35) + " " + dep["DisplayTime"].rjust(7)
 		 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)		
 
