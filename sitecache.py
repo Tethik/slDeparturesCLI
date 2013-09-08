@@ -14,6 +14,8 @@ gflags.DEFINE_bool("clearcache", False, "Clear cache for station lookup")
 A cache to reduce GetSite-calls to the api. 
 '''
 class SiteCache:	
+	namespace = '{http://www1.sl.se/realtidws/}'
+
 	def __init__(self):
 		self.vals = dict()
 		if gflags.FLAGS.clearcache:
@@ -27,11 +29,11 @@ class SiteCache:
 		resp, content = h.request("https://api.trafiklab.se/sl/realtid/GetSite?stationSearch="+searchVal+"&key="+conf.__API_KEY__, "GET")		
 		if gflags.FLAGS.verbose:
 			print content
-		tree = ET.fromstring(content)
+		tree = ET.fromstring(content)		
 		number = -1
-		for site in tree[1]:			
-			number = int(site[0].text)
-			name = site[1].text			
+		for site in tree.findall("{0}Sites/{0}Site".format(self.namespace)):			
+			number = int(site.find("{0}Number".format(self.namespace)).text)
+			name = site.find("{0}Name".format(self.namespace)).text		
 			self.vals[name] = number
 		return number			
 
