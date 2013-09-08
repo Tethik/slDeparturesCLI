@@ -21,7 +21,12 @@ Conky:
 
     Stadshagen:
     ${execpi 60 slDeparturesCLI --conky --stationstr=Stadshagen}
+        
     KTH:
     ${execpi 60 slDeparturesCLI --conky 9204}
 
 
+TODO
+===============
+* Better functionality for stationstr searches.
+* Conky formatting (`--conky`)
