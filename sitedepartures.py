@@ -100,7 +100,9 @@ class SiteDeparture:
 		tree = ET.fromstring(content)
 		for metro in tree.findall("{0}Metros/{0}Metro".format(self.namespace)):			
 			groupOfLine = metro.find("{0}GroupOfLine".format(self.namespace)).text.split(" ")[1]
-			departures.append(self._ParseDisplayRow(metro.find("{0}DisplayRow1".format(self.namespace)).text, groupOfLine))
+			displayRow1 = metro.find("{0}DisplayRow1".format(self.namespace)).text
+			if displayRow1:
+				departures.append(self._ParseDisplayRow(displayRow1, groupOfLine))			
 			displayRow2 = metro.find("{0}DisplayRow2".format(self.namespace)).text
 			if displayRow2:
 				for row in displayRow2.split(","):
