@@ -4,7 +4,7 @@
 
 import xml.etree.ElementTree as ET
 import httplib2
-import pickle, os
+import pickle, os, gflags
 import conf
 import re
 import datetime
@@ -27,7 +27,19 @@ class SiteDeparture:
 		#print cols[-2]		
 		expectedtime = datetime.now() 
 		if cols[-2] != "Kort":
-			expectedtime += timedelta(minutes=int(cols[-2]))
+			try:
+				# try parsing with X min format
+				expectedtime += timedelta(minutes=int(cols[-2]))
+			except:
+				# final try parsing with XX:XX format
+				try:
+					v = cols[-1].split(":")
+					expectedtime = expectedtime.replace(hour=int(v[0]), minute=int(v[1]))
+					if gflags.FLAGS.verbose:
+						print expectedtime
+					displaytime = cols[-1]
+				except:
+					pass #terminate anyhow
 		
 		#pattern = "([0-9]+) ([A-ö\\.]+) ([0-9]+ min|Kort tåg\\.)"
 		#m = re.search(pattern, row)
@@ -55,7 +67,9 @@ class SiteDeparture:
 		departures = list()
 		h = httplib2.Http()
 		url = "https://api.trafiklab.se/sl/realtid/GetDpsDepartures?siteId="+str(siteId)+"&key="+conf.__API_KEY__		
-		#print url
+		
+		if gflags.FLAGS.verbose:
+			print url  
 		resp, content = h.request(url)		
 		tree = ET.fromstring(content)		
 		for bus in tree.findall("{0}Buses/{0}DpsBus".format(self.namespace)):
@@ -79,6 +93,8 @@ class SiteDeparture:
 		departures = list()
 		# I have to use the old api for the metro lines..	
 		oldUrl = "https://api.trafiklab.se/sl/realtid/GetDepartures?siteId="+str(siteId)+"&key="+conf.__API_KEY__
+		if gflags.FLAGS.verbose:
+			print oldUrl  
 		h = httplib2.Http()
 		resp, content = h.request(oldUrl)		
 		tree = ET.fromstring(content)
